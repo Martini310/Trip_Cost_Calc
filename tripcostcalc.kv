@@ -1,0 +1,120 @@
+<MyRoot>:
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: "Skąd ruszasz?"
+            font_size: 32
+            color: 0.88, 0.39, 0.2
+        TextInput:
+            id: start
+            hint_text: "Adres startowy"
+            multiline: False
+        Label:
+            text: "Dokąd jedziesz?"
+            font_size: 32
+        TextInput:
+            id: meta
+            hint_text: "Punkt docelowy"
+            multiline: False
+        Label:
+            text: "Rodzaj paliwa"
+            font_size: 24
+            color: 0.88, 0.39, 0.2
+        BoxLayout
+            orientation: 'horizontal'
+			BoxLayout:
+				orientation: 'vertical'
+				Label:
+					text: "PB95"
+					font_size: 20
+					background_color: (26/255, 150/255, 44/255, 1)
+					canvas.before:
+						Color:
+							rgba: self.background_color
+						Rectangle:
+							size: self.size
+							pos: self.pos
+					bold: True
+					outline_color: (250, 250, 250)
+					outline_width: 2
+		        CheckBox:
+		            group: "fuel"
+		            on_active: root.paliwo = "PB95"
+	        BoxLayout:
+				orientation: 'vertical'
+				Label:
+					text: "PB98"
+					font_size: 20
+					background_color: (19/255, 112/255, 33/255, 1)
+					canvas.before:
+						Color:
+							rgba: self.background_color
+						Rectangle:
+							size: self.size
+							pos: self.pos
+					bold: True
+					outline_color: (250, 250, 250)
+					outline_width: 2
+		        CheckBox:
+		            group: "fuel"
+		            on_active: root.paliwo = "PB98"
+		    BoxLayout:
+				orientation: 'vertical'
+				Label:
+					text: "ON"
+					font_size: 20
+					background_color: (135/255, 135/255, 135/255, 1)
+					canvas.before:
+						Color:
+							rgba: self.background_color
+						Rectangle:
+							size: self.size
+							pos: self.pos
+					bold: True
+					outline_color: (250, 250, 250)
+					outline_width: 2
+		        CheckBox:
+		            group: "fuel"
+		            on_active: root.paliwo = "ON"
+		    BoxLayout:
+				orientation: 'vertical'
+				Label:
+					text: "ON+"
+					font_size: 20
+					background_color: (70/255, 70/255, 70/255, 1)
+					canvas.before:
+						Color:
+							rgba: self.background_color
+						Rectangle:
+							size: self.size
+							pos: self.pos
+					bold: True
+					outline_color: (250, 250, 250)
+					outline_width: 2
+		        CheckBox:
+		            group: "fuel"
+		            on_active: root.paliwo = "ON+"
+		    BoxLayout:
+				orientation: 'vertical'
+				Label:
+					text: "LPG"
+					font_size: 20
+					background_color: (53/255, 153/255, 219/255, 1)
+					canvas.before:
+						Color:
+							rgba: self.background_color
+						Rectangle:
+							size: self.size
+							pos: self.pos
+					bold: True
+					outline_color: (250, 250, 250)
+					outline_width: 2
+		        CheckBox:
+		            group: "fuel"
+		            on_active: root.paliwo = "LPG"
+        Button:
+            text: "Oblicz"
+            font_size: 32
+            size: 20, 50
+            on_press: root.press()
+
