@@ -8,6 +8,9 @@
         TextInput:
             id: start
             hint_text: "Adres startowy"
+            size_hint_y: None
+            height:50
+            font_size: 22
             multiline: False
         Label:
             text: "Dokąd jedziesz?"
@@ -15,11 +18,38 @@
         TextInput:
             id: meta
             hint_text: "Punkt docelowy"
+            size_hint_y: None
+            height:50
+            font_size: 22
             multiline: False
         Label:
-            text: "Rodzaj paliwa"
-            font_size: 24
-            color: 0.88, 0.39, 0.2
+            text: str(slider.value)[:4] if len(str(slider.value)[:str(slider.value).index(".")]) >= 2 else str(slider.value)[:3]
+            size_hint_y: None
+            height:30
+            font_size: 18
+        Slider:
+            id: slider
+            min: 1.0
+	        max: 20.0
+	        step: 0.1
+	        value: 10.0
+	        orientation: 'horizontal'
+	    BoxLayout:
+	        orientation: 'horizontal'
+            CheckBox:
+	            group: "auto_manual"
+	            on_active: root.paliwo = "PB95"
+	        Label:
+	            text: "Rodzaj paliwa"
+	            font_size: 18
+	            color: 0.88, 0.39, 0.2
+	        CheckBox:
+	            group: "auto_manual"
+	            on_active: root.paliwo = "PB95"
+	        Label:
+	            text: "Własna cena"
+	            font_size: 18
+	            color: 0.88, 0.39, 0.2
         BoxLayout
             orientation: 'horizontal'
 			BoxLayout:
@@ -113,8 +143,10 @@
 		            group: "fuel"
 		            on_active: root.paliwo = "LPG"
         Button:
+            id: button
             text: "Oblicz"
             font_size: 32
             size: 20, 50
+            background_color: (53/255, 153/255, 219/255, 1)
             on_press: root.press()
-
+            on_release: root.release()

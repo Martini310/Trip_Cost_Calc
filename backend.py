@@ -2,6 +2,7 @@ from os import environ
 from requests import get, post
 from dotenv import load_dotenv
 from bs4 import BeautifulSoup
+import pprint
 
 
 class TripCost:
@@ -16,7 +17,7 @@ class TripCost:
         self.api_key = environ.get('API_KEY')
         self.url = "https://maps.googleapis.com/maps/api/distancematrix/json"
         self.url_petrol = "https://www.autocentrum.pl/paliwa/ceny-paliw/"
-        self.woj = 'wielkopolskie'  # self.wojewodztwo()
+        self.woj = self.wojewodztwo()
         self.price = self.petrol_price(self.fuel, self.woj)
         self.distance = self.distance_duration(self.origin, self.destination)[0]
         self.duration = self.distance_duration(self.origin, self.destination)[1]
@@ -55,10 +56,10 @@ class TripCost:
         response_address = get(url)
         body_address = response_address.json()
 
-        print(body_address)
+        pprint.pprint(body_address)
         # starts_address = body_address['results'][0]['formatted_address']
         wojewodztwo = body_address['results'][0]['address_components'][5]['long_name']
-
+        print(wojewodztwo)
         return wojewodztwo.lower()
 
     def distance_duration(self, origin, destination):
@@ -74,6 +75,8 @@ class TripCost:
 
         distance = body['rows'][0]['elements'][0]['distance']['value']
         duration = body['rows'][0]['elements'][0]['duration']["text"]
+        duration = duration.replace('hours', 'godz.').replace('hour', 'godz.')
+        duration = duration.replace('mins', 'min.')
 
         return [distance, duration]
 
