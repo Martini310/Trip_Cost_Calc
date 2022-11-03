@@ -7,10 +7,10 @@ import pprint
 
 class TripCost:
 
-    def __init__(self, origin, destination, type_of_fuel, consumption):
+    def __init__(self, origin, destination, type_of_fuel_or_price, consumption):
         self.origin = origin
         self.destination = destination
-        self.fuel = type_of_fuel
+        self.fuel = type_of_fuel_or_price
         self.consumption = consumption
 
         load_dotenv()
@@ -18,9 +18,12 @@ class TripCost:
         self.url = "https://maps.googleapis.com/maps/api/distancematrix/json"
         self.url_petrol = "https://www.autocentrum.pl/paliwa/ceny-paliw/"
         self.woj = self.wojewodztwo()
-        self.price = self.petrol_price(self.fuel, self.woj)
         self.distance = self.distance_duration(self.origin, self.destination)[0]
         self.duration = self.distance_duration(self.origin, self.destination)[1]
+        if type(self.fuel) == str:
+            self.price = self.petrol_price(self.fuel, self.woj)
+        else:
+            self.price = self.fuel
         self.trip_cost = self.cost(self.price, self.distance, self.consumption)
 
     def petrol_price(self, type_of_fuel, woj):

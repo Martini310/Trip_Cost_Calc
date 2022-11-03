@@ -1,21 +1,12 @@
 # import kivy
 from kivy.app import App
 from kivy.uix.label import Label
-from kivy.uix.widget import Widget
 from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.popup import Popup
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.textinput import TextInput
-import random
-from kivy.lang import Builder
-from kivy.properties import ObjectProperty, StringProperty
 from backend import *
-from kivy.factory import Factory
-from kivy.uix.tabbedpanel import TabbedPanel
 
-
-# Builder.load_file('tripcostcalc.kv')
 
 # kivy.require('1.9.0')
 
@@ -25,21 +16,26 @@ class MyRoot(BoxLayout):
     def __init__(self):
         super(MyRoot, self).__init__()
         self.test = None
+        self.fuel_price = None
+        self.paliwo = 'fuel'
 
     def press(self):
-        self.test = PleaseWait(title="test", size_hint=(0.8, 0.8), auto_dismiss=True)
+        self.test = PleaseWait(title="test", size_hint=(0.8, 0.8), auto_dismiss=False)
         self.test.open()
 
     def release(self):
         start = self.ids.start.text
         meta = self.ids.meta.text
-        paliwo = self.paliwo
         consumption = self.ids.slider.value
+        if self.fuel_price == 'fuel':
+            self.paliwo = self.paliwo
+        elif self.fuel_price == 'price':
+            self.paliwo = self.ids.price_slider.value
 
-        wynik = TripCost(start, meta, paliwo, consumption)
+        wynik = TripCost(start, meta, self.paliwo, consumption)
 
         info = f'Koszt przejazdu z: \n{start} \ndo: \n{meta} \nwynosi {round(wynik.trip_cost, 2)}zł. \n' \
-               f'Potrwa {wynik.duration} i wyniesie {wynik.distance / 1000}km. \nKoszt {paliwo} to {wynik.price}zł/l.'
+               f'Potrwa {wynik.duration} i wyniesie {wynik.distance / 1000}km. \nKoszt {self.paliwo if type(self.paliwo) == str else "paliwa"} to {wynik.price}zł/l.'
         print(info)
 
         layout = GridLayout(cols=1, padding=10)
@@ -60,6 +56,22 @@ class MyRoot(BoxLayout):
         # Attach close button press with popup.dismiss action
         close_button.bind(on_press=popup.dismiss)
         self.test.dismiss()
+
+    def select_price(self):
+        paliwa = self.ids.paliwa
+        paliwa.height, paliwa.size_hint_y, paliwa.opacity, paliwa.disabled = 0, None, 0, True
+        price_label = self.ids.price_label
+        price_label.height, price_label.size_hint_y, price_label.opacity, price_label.disabled = 15, 0.5, 1, False
+        price_slider = self.ids.price_slider
+        price_slider.height, price_slider.size_hint_y, price_slider.opacity, price_slider.disabled = 1, 0.5, 1, False
+
+    def select_fuel(self):
+        paliwa = self.ids.paliwa
+        paliwa.height, paliwa.size_hint_y, paliwa.opacity, paliwa.disabled = 1, 1, 1, False
+        price_label = self.ids.price_label
+        price_label.height, price_label.size_hint_y, price_label.opacity, price_label.disabled = 0, None, 0, True
+        price_slider = self.ids.price_slider
+        price_slider.height, price_slider.size_hint_y, price_slider.opacity, price_slider.disabled = 0, None, 0, True
 
 
 class PleaseWait(Popup):

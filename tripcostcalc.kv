@@ -3,8 +3,9 @@
         orientation: 'vertical'
         Label:
             text: "Skąd ruszasz?"
-            font_size: 32
+            font_size: 28
             color: 0.88, 0.39, 0.2
+            size_hint_y: 0.7
         TextInput:
             id: start
             hint_text: "Adres startowy"
@@ -14,7 +15,8 @@
             multiline: False
         Label:
             text: "Dokąd jedziesz?"
-            font_size: 32
+            font_size: 28
+            size_hint_y: 0.7
         TextInput:
             id: meta
             hint_text: "Punkt docelowy"
@@ -23,41 +25,70 @@
             font_size: 22
             multiline: False
         Label:
+            text: "Spalanie"
+            font_size: 24
+            color: 0.88, 0.39, 0.2
+            size_hint_y: 0.5
+        Label:
             text: str(slider.value)[:4] if len(str(slider.value)[:str(slider.value).index(".")]) >= 2 else str(slider.value)[:3]
             size_hint_y: None
-            height:30
+            height: 10
             font_size: 18
+
         Slider:
             id: slider
             min: 1.0
-	        max: 20.0
+	        max: 15.0
 	        step: 0.1
-	        value: 10.0
+	        value: 8.00
 	        orientation: 'horizontal'
+	        size_hint_y: 0.6
 	    BoxLayout:
 	        orientation: 'horizontal'
-            CheckBox:
-	            group: "auto_manual"
-	            on_active: root.paliwo = "PB95"
-	        Label:
-	            text: "Rodzaj paliwa"
-	            font_size: 18
-	            color: 0.88, 0.39, 0.2
-	        CheckBox:
-	            group: "auto_manual"
-	            on_active: root.paliwo = "PB95"
-	        Label:
-	            text: "Własna cena"
-	            font_size: 18
-	            color: 0.88, 0.39, 0.2
+	        size_hint_y: 0.4
+            ToggleButton:
+                text: 'Wybierz paliwo'
+                group: 'fuel_price'
+                state: 'down'
+                on_release: root.select_fuel()
+                on_state: root.fuel_price = 'fuel'
+            ToggleButton:
+                text: 'Wprowadź cenę'
+                group: 'fuel_price'
+                on_release: root.select_price()
+                on_state: root.fuel_price = 'price'
+        Slider:
+            id: price_slider
+            min: 2.00
+	        max: 9.00
+	        step: 0.01
+	        value: 5.50
+	        orientation: 'horizontal'
+	        height: 0
+            size_hint_y: None
+            opacity: 0
+            disabled: True
+        Label:
+            id: price_label
+            text: str(price_slider.value)[:4] if len(str(price_slider.value)) > 4 else str(price_slider.value) + 'zł'
+            size_hint_y: None
+            height:15
+            font_size: 18
+            height: 0
+            size_hint_y: None
+            opacity: 0
+            disabled: True
         BoxLayout
             orientation: 'horizontal'
+            id: paliwa
 			BoxLayout:
 				orientation: 'vertical'
-				Label:
+				Button:
 					text: "PB95"
 					font_size: 20
-					background_color: (26/255, 150/255, 44/255, 1)
+					background_normal: ''
+	                background_color: '#1a962d'
+	                background_down: '#1a962d'
 					canvas.before:
 						Color:
 							rgba: self.background_color
@@ -67,15 +98,19 @@
 					bold: True
 					outline_color: (250, 250, 250)
 					outline_width: 2
+					on_release: root.ids.pb95.state = 'down'
 		        CheckBox:
+		            id: pb95
 		            group: "fuel"
 		            on_active: root.paliwo = "PB95"
 	        BoxLayout:
 				orientation: 'vertical'
-				Label:
+				Button:
 					text: "PB98"
 					font_size: 20
-					background_color: (19/255, 112/255, 33/255, 1)
+					background_normal: ''
+	                background_color: '#137021'
+	                background_down: '#137021'
 					canvas.before:
 						Color:
 							rgba: self.background_color
@@ -85,15 +120,19 @@
 					bold: True
 					outline_color: (250, 250, 250)
 					outline_width: 2
+					on_release: root.ids.pb98.state = 'down'
 		        CheckBox:
+		            id: pb98
 		            group: "fuel"
 		            on_active: root.paliwo = "PB98"
 		    BoxLayout:
 				orientation: 'vertical'
-				Label:
+				Button:
 					text: "ON"
 					font_size: 20
-					background_color: (135/255, 135/255, 135/255, 1)
+					background_normal: ''
+	                background_color: '#878787'
+	                background_down: '#878787'
 					canvas.before:
 						Color:
 							rgba: self.background_color
@@ -103,15 +142,19 @@
 					bold: True
 					outline_color: (250, 250, 250)
 					outline_width: 2
+					on_release: root.ids.on.state = 'down'
 		        CheckBox:
+		            id: on
 		            group: "fuel"
 		            on_active: root.paliwo = "ON"
 		    BoxLayout:
 				orientation: 'vertical'
-				Label:
+				Button:
 					text: "ON+"
 					font_size: 20
-					background_color: (70/255, 70/255, 70/255, 1)
+					background_normal: ''
+	                background_color: '#464646'
+	                background_down: '#464646'
 					canvas.before:
 						Color:
 							rgba: self.background_color
@@ -121,15 +164,19 @@
 					bold: True
 					outline_color: (250, 250, 250)
 					outline_width: 2
+					on_release: root.ids.on_plus.state = 'down'
 		        CheckBox:
+		            id: on_plus
 		            group: "fuel"
 		            on_active: root.paliwo = "ON+"
 		    BoxLayout:
 				orientation: 'vertical'
-				Label:
+				Button:
 					text: "LPG"
 					font_size: 20
-					background_color: (53/255, 153/255, 219/255, 1)
+					background_normal: ''
+	                background_color: '#3599db'
+	                background_down: '#3599db'
 					canvas.before:
 						Color:
 							rgba: self.background_color
@@ -139,7 +186,9 @@
 					bold: True
 					outline_color: (250, 250, 250)
 					outline_width: 2
+					on_release: root.ids.lpg.state = 'down'
 		        CheckBox:
+		            id: lpg
 		            group: "fuel"
 		            on_active: root.paliwo = "LPG"
         Button:
