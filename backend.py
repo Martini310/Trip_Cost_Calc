@@ -3,6 +3,9 @@ from requests import get, post
 from dotenv import load_dotenv
 from bs4 import BeautifulSoup
 import pprint
+# from main import ErrorPopup
+from kivy.uix.popup import Popup
+from kivy.factory import Factory
 
 
 class TripCost:
@@ -12,7 +15,6 @@ class TripCost:
         self.destination = destination
         self.fuel = type_of_fuel_or_price
         self.consumption = consumption
-
         load_dotenv()
         self.api_key = environ.get('API_KEY')
         self.url = "https://maps.googleapis.com/maps/api/distancematrix/json"
