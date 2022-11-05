@@ -204,7 +204,7 @@
 <ErrorPopup@Popup>:
     title: 'Error'
     auto_dismiss: True
-    size_hint: 0.5, 0.5
+    size_hint: 0.6, 0.5
 #    BoxLayout:
 #        orientation: 'vertical'
 #        Label:
@@ -215,3 +215,74 @@
 #            height: 48
 #            text: 'Okay'
 #            on_release: root.dismiss()
+
+
+<Result@Popup>:
+    title: 'Result'
+    auto_dismiss: False
+    size_hint: 0.8, 0.8
+    BoxLayout:
+        orientation: 'vertical'
+
+		BoxLayout:
+            orientation: 'horizontal'
+            BoxLayout:
+                orientation: 'vertical'
+		        Label:
+		            text: 'Podróż z:'
+					italic: True
+					padding_y: 20
+		        Label:
+		            id: a
+		            text: 'a'
+		            bold: True
+			BoxLayout:
+                orientation: 'vertical'
+		        Label:
+		            text: 'Do:'
+		            italic: True
+		        Label:
+		            id: b
+		            text: 'b'
+		            bold: True
+		            halign: 'left'
+		            valign: 'middle'
+		            size: self.size
+
+        Label:
+            text: 'Koszt przejazdu:'
+            italic: True
+        Label:
+            id: c
+            text: 'c'
+            bold: True
+
+        Label:
+            text: 'Czas podróży:'
+            italic: True
+        Label:
+            id: d
+            text: 'd'
+            bold: True
+
+        Label:
+            text: 'Odległość:'
+            italic: True
+        Label:
+            id: e
+            text: 'e'
+            bold: True
+
+        Label:
+            text: 'Cena paliwa:'
+            italic: True
+        Label:
+            id: f
+            text: 'f'
+            bold: True
+
+        Button:
+            size_hint_y: None
+            height: 48
+            text: 'Okay'
+            on_release: root.dismiss()
