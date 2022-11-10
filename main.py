@@ -3,11 +3,10 @@ from kivy.app import App
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.popup import PopupException
 from kivy.uix.popup import Popup
-from kivy.core.text.markup import MarkupLabel
 from kivy.uix.gridlayout import GridLayout
 from backend import *
+from kivy.factory import Factory
 
 
 # kivy.require('1.9.0')
@@ -47,24 +46,30 @@ class MyRoot(BoxLayout):
             wynik = TripCost(start, meta, self.paliwo, consumption)
 
             self.info = f'Koszt przejazdu z: \n{start} \ndo: \n{meta} \nwynosi {round(wynik.trip_cost, 2)}zł. \n' \
-                        f'Potrwa {wynik.duration} i wyniesie {wynik.distance / 1000}km. \n' \
+                        f'Potrwa {wynik.duration_text} i wyniesie {wynik.distance_value / 1000}km. \n' \
                         f'Koszt {self.paliwo if type(self.paliwo) == str else "paliwa"} to {wynik.price}zł/l.'
             print(self.info)
 
             test = Factory.Result()
 
-            test.ids['a'].text = start
-            test.ids['b'].text = meta
-            test.ids['c'].text = str(round(wynik.trip_cost, 2))
-            test.ids['d'].text = wynik.duration
-            test.ids['e'].text = str(wynik.distance / 1000)
-            test.ids['f'].text = str(wynik.price)
+            test.ids['a'].text = start.capitalize()
+            test.ids['b'].text = meta.capitalize()
+            test.ids['c'].text = str(round(wynik.trip_cost, 2)) + "zł"
+            test.ids['d'].text = wynik.duration_text.replace('hours', 'godz.').replace('mins', 'min.')
+            test.ids['e'].text = str(wynik.distance_value / 1000) + "km"
+            test.ids['f'].text = str(wynik.price) + "zł/l"
+            test.ids['g'].text = wynik.weather_description[0]
+            test.ids['h'].text = 'widoczność: ' + str(wynik.weather_description[1]) + 'm'
 
             test.open()
             self.please_wait.dismiss()
         except KeyError:
             self.please_wait.dismiss()
             self.layout("Sprawdź, czy adresy,\nktóre podałeś są prawidłowe.\nNie mogę znaleźć takiej trasy").open()
+        # except ValueError("ValueError: could not convert string to float: '-'"):
+        #     self.please_wait.dismiss()
+        #     self.layout("Spróbuj ponownie wybierając inny rodzaj paliwa lub samemu wprowadzając cenę.\n"
+        #                 "Wystąpił problem z pobraniem ceny wybranego paliwa.")
 
     def select_price(self):
         paliwa = self.ids.paliwa
@@ -88,9 +93,10 @@ class MyRoot(BoxLayout):
         close_button = Button(text="Ok")
         layout.add_widget(popup_label)
         layout.add_widget(close_button)
-        test = Factory.ErrorPopup(content=layout)
-        close_button.bind(on_press=test.dismiss)
-        return test
+        error_popup = Factory.ErrorPopup(content=layout)
+        close_button.bind(on_press=error_popup.dismiss)
+        # error_popup2 = Factory.Result()
+        return error_popup
 
 
 class PleaseWait(Popup):

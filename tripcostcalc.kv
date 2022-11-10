@@ -4,7 +4,9 @@
         Label:
             text: "Skąd ruszasz?"
             font_size: 28
-            color: 0.88, 0.39, 0.2
+            font_name: 'Comic'
+            bold: True
+            color: '#269ce0'
             size_hint_y: 0.7
         TextInput:
             id: start
@@ -16,6 +18,9 @@
         Label:
             text: "Dokąd jedziesz?"
             font_size: 28
+            font_name: 'Comic'
+            bold: True
+            color: '#e32437'
             size_hint_y: 0.7
         TextInput:
             id: meta
@@ -25,12 +30,13 @@
             font_size: 22
             multiline: False
         Label:
-            text: "Spalanie"
-            font_size: 24
-            color: 0.88, 0.39, 0.2
+            text: "SPALANIE"
+            font_name: "Comic"
+            font_size: 20
             size_hint_y: 0.5
         Label:
-            text: str(slider.value)[:4] if len(str(slider.value)[:str(slider.value).index(".")]) >= 2 else str(slider.value)[:3]
+            text: str(round(slider.value, 1)) + ' l / 100km'
+            font_name: 'Comic'
             size_hint_y: None
             height: 10
             font_size: 18
@@ -70,7 +76,8 @@
             disabled: True
         Label:
             id: price_label
-            text: str(price_slider.value)[:4] if len(str(price_slider.value)) > 4 else str(price_slider.value) + 'zł'
+            text: str(round(price_slider.value, 2)) + ' zł'
+            font_name: 'Comic'
             size_hint_y: None
             height:15
             font_size: 18
@@ -220,67 +227,135 @@
 <Result@Popup>:
     title: 'Result'
     auto_dismiss: False
-    size_hint: 0.8, 0.8
+    size_hint: 0.95, 0.95
     BoxLayout:
         orientation: 'vertical'
-
 		BoxLayout:
             orientation: 'horizontal'
+            size_hint_y: 0.12
+
             BoxLayout:
                 orientation: 'vertical'
+                text_size: self.size
+                valign: 'top'
+                halign: 'center'
 		        Label:
 		            text: 'Podróż z:'
 					italic: True
-					padding_y: 20
 		        Label:
+		            text_size: self.size
+                    valign: 'top'
+                    halign: 'center'
 		            id: a
+		            font_size: 24
+		            color: '#2480d1'
 		            text: 'a'
 		            bold: True
 			BoxLayout:
                 orientation: 'vertical'
+                text_size: self.size
+                valign: 'top'
+                halign: 'center'
 		        Label:
 		            text: 'Do:'
 		            italic: True
 		        Label:
 		            id: b
 		            text: 'b'
+		            font_size: 24
 		            bold: True
-		            halign: 'left'
-		            valign: 'middle'
+		            color: '#f22745'
+		            halign: 'center'
+		            valign: 'top'
 		            size: self.size
+		BoxLayout:
+			orientation: 'horizontal'
+			size_hint_y: 0.6
+			BoxLayout:
+				orientation: 'vertical'
+				size_hint: 0.4, 1
+				canvas.before:
+	                Color:
+	                    rgba: 189 / 255, 189 / 255, 189 / 255, 0.5
+	                Line:
+	                    width: 3
+	                    rectangle: self.x, self.y, self.width, self.height
+		        Label:
+		            text: 'Koszt przejazdu:'
+		            italic: True
+		        Label:
+		        	text_size: self.size
+                    valign: 'top'
+                    halign: 'center'
+                    font_size: 22
+		            id: c
+		            text: 'c'
+		            bold: True
 
-        Label:
-            text: 'Koszt przejazdu:'
-            italic: True
-        Label:
-            id: c
-            text: 'c'
-            bold: True
+		        Label:
+		            text: 'Czas podróży:'
+		            italic: True
+		        Label:
+		        	text_size: self.size
+                    valign: 'top'
+                    halign: 'center'
+                    font_size: 22
+		            id: d
+		            text: 'd'
+		            bold: True
 
-        Label:
-            text: 'Czas podróży:'
-            italic: True
-        Label:
-            id: d
-            text: 'd'
-            bold: True
+		        Label:
+		            text: 'Odległość:'
+		            italic: True
+		        Label:
+                    text_size: self.size
+                    valign: 'top'
+                    halign: 'center'
+                    font_size: 22
+		            id: e
+		            text: 'e'
+		            bold: True
 
-        Label:
-            text: 'Odległość:'
-            italic: True
-        Label:
-            id: e
-            text: 'e'
-            bold: True
+		        Label:
+		            text: 'Cena paliwa:'
+		            italic: True
+		        Label:
+                    text_size: self.size
+                    valign: 'top'
+                    halign: 'center'
+                    font_size: 22
+		            id: f
+		            text: 'f'
+		            bold: True
 
-        Label:
-            text: 'Cena paliwa:'
-            italic: True
-        Label:
-            id: f
-            text: 'f'
-            bold: True
+		        Label:
+		            text: 'Warunki pogodowe:'
+		            italic: True
+		        Label:
+                    text_size: self.size
+                    valign: 'top'
+                    halign: 'center'
+                    font_size: 22
+		            id: g
+		            text: 'czyste niebo'
+		            bold: True
+		        Label:
+                    text_size: self.size
+                    valign: 'top'
+                    halign: 'center'
+		            id: h
+		            text: 'widoczność: 10000m'
+		            bold: True
 
+		    BoxLayout:
+				orientation: 'vertical'
+				size_hint_x: 0.5
+				Image:
+					source: "map.jpg"
+					size: self.texture_size
+		BoxLayout:
+			orientation: 'horizontal'
+			size_hint_y: 0.02
         Button:
             size_hint_y: None
             height: 48
