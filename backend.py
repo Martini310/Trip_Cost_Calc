@@ -21,7 +21,7 @@ class TripCost:
         # Google API KEY
         self.api_key = environ.get('API_KEY')
         # Open Weather Map API KEY
-        self.w_api_key = 'b30120ababb8c8efa13ddcdd60bac8a8'
+        self.w_api_key = environ.get('WEATHER_API')
 
         # URLs
         self.url = "https://maps.googleapis.com/maps/api/distancematrix/json"
@@ -30,37 +30,48 @@ class TripCost:
         # Google Maps Library Object
         self.gmaps = googlemaps.Client(key=self.api_key)
 
+        # Origin coordinates
         self.gmaps_origin = self.gmaps.geocode(self.origin)
+        # Destination coordinates
         self.gmaps_destination = self.gmaps.geocode(self.destination)
-
+        # Coordinates of the center point of the trip
         self.center_coordinates = self.center_point(self.gmaps_origin, self.gmaps_destination)
-
+        # Google API response with trip details
         self.directions_result = self.gmaps.directions(self.gmaps_origin[0]["formatted_address"],
                                                        self.gmaps_destination[0]["formatted_address"],
                                                        mode="driving",
                                                        departure_time=datetime.now() + timedelta(minutes=0.5))
-
+        # trip distance string
         self.distance_text = self.directions_result[0]['legs'][0]['distance']['text']
+        # trip distance int (meters)
         self.distance_value = self.directions_result[0]['legs'][0]['distance']['value']
-
+        # trip duration string
         self.duration_text = self.directions_result[0]['legs'][0]['duration']['text']
+        # trip duration int (minutes)
         self.duration_value = self.directions_result[0]['legs'][0]['duration']['value']
 
+        # Processed Weather API response (cloudiness, visibility)
         self.weather_description = self.weather_conditions(self.center_coordinates[0], self.center_coordinates[1])
 
+        # Province of user location
         self.woj = self.wojewodztwo()
 
+        # Fuel price
         if type(self.fuel) == str:
+            # if selected type of fuel
             self.price = self.petrol_price(self.fuel, self.woj)
         else:
+            # if set by user
             self.price = self.fuel
 
+        # Cost of the trip in PLN
         self.trip_cost = self.cost(self.price, self.distance_value, self.consumption)
 
+        # Generate map with trip path
         self.map()
 
     def center_point(self, origin, destination):
-        # Return list with coordinates of central point between given positions
+        # Return list with coordinates of the central point between given positions
         origin_lat = origin[0]["geometry"]["location"]["lat"]
         origin_lng = origin[0]["geometry"]["location"]["lng"]
         destination_lat = destination[0]["geometry"]["location"]["lat"]
@@ -70,6 +81,7 @@ class TripCost:
         return [center_lat, center_lng]
 
     def petrol_price(self, type_of_fuel, woj):
+        # Return fuel price depended on given location and type of fuel
         r = get(self.url_petrol, headers={'user-agent': 'Martin.pl'})
         soup = BeautifulSoup(r.text, "lxml")  # obiekt strony interpretowany przez lxml
         table = soup.tbody  # ograniczenie do znacznika table
@@ -94,7 +106,9 @@ class TripCost:
         return float(price)
 
     def wojewodztwo(self):
+        # Return province of current user location
         location = "https://www.googleapis.com/geolocation/v1/geolocate?key=" + self.api_key
+        # Google API response with user location
         response_location = post(location)
         body_location = response_location.json()
         lat = body_location['location']['lat']
@@ -105,11 +119,8 @@ class TripCost:
               f'=street_address|postal_code|administrative_area_level_1&location_type=ROOFTOP&key={self.api_key} '
         response_address = get(url)
         body_address = response_address.json()
-
-        # pprint.pprint(body_address)
-
         wojewodztwo = body_address['results'][0]['address_components'][5]['long_name']
-        # print(wojewodztwo)
+
         return wojewodztwo.lower()
 
     # def distance_duration(self, origin, destination):
@@ -132,11 +143,12 @@ class TripCost:
 
     @staticmethod
     def cost(price, distance, consumption):
+        # Return trip cost
         return float(price * distance / 1000 * consumption / 100)
 
     def weather_conditions(self, lat, lng):
-        api_key = 'b30120ababb8c8efa13ddcdd60bac8a8'
-        link = f'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lng}&lang=pl&appid={api_key}'
+        # Return list with weather description (cloudiness, visibility)
+        link = f'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lng}&lang=pl&appid={self.w_api_key}'
         response = get(link)
         weather = response.json()
         description = weather['weather'][0]['description']
@@ -144,6 +156,7 @@ class TripCost:
         return [description, visibility]
 
     def map(self):
+        # Generate map image in jpg with drew path
         marker_points = []
         waypoints = []
 
@@ -158,9 +171,10 @@ class TripCost:
 
         # When more than 2 points
         # markers = ["color:blue|size:mid|label:" + chr(65 + i) + "|" + r for i, r in enumerate(marker_points)]
+
         markers = ["color:blue|size:mid|label:A|" + marker_points[0], "color:red|size:mid|label:B|" + marker_points[1]]
 
-        zoom = 3
+        zoom = 8
         if self.distance_value < 3500000:
             zoom = 4
         if self.distance_value < 1500000:
