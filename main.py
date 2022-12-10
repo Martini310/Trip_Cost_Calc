@@ -66,9 +66,9 @@ class MyRoot(BoxLayout):
             result.open()
             self.please_wait.dismiss()
             os.remove('map.jpg')
-        except KeyError:
+        except KeyError as K:
             self.please_wait.dismiss()
-            self.layout("Sprawdź, czy adresy,\nktóre podałeś są prawidłowe.\nNie mogę znaleźć takiej trasy").open()
+            self.layout("Sprawdź, czy adresy,\nktóre podałeś są prawidłowe.\nNie mogę znaleźć takiej trasy" + str(K)).open()
 
     def select_price(self):
         # Change the view to set fuel price by slider

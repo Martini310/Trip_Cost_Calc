@@ -113,13 +113,17 @@ class TripCost:
         body_location = response_location.json()
         lat = body_location['location']['lat']
         lng = body_location['location']['lng']
-
+        pprint.pprint(body_location)
         # Location address
         url = f'https://maps.googleapis.com/maps/api/geocode/json?latlng={lat},{lng}&location=pl&result_type' \
               f'=street_address|postal_code|administrative_area_level_1&location_type=ROOFTOP&key={self.api_key} '
         response_address = get(url)
         body_address = response_address.json()
-        wojewodztwo = body_address['results'][0]['address_components'][5]['long_name']
+        pprint.pprint(body_address)
+        if body_address['status'] == 'ZERO_RESULTS':
+            return 'Polska'
+        else:
+            wojewodztwo = body_address['results'][0]['address_components'][5]['long_name']
 
         return wojewodztwo.lower()
 
