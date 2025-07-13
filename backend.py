@@ -124,7 +124,7 @@ class TripCost:
             return 'Polska'
         else:
             wojewodztwo = body_address['results'][0]['address_components'][5]['long_name']
-
+            wojewodztwo = wojewodztwo.split()[1]
         return wojewodztwo.lower()
 
     # def distance_duration(self, origin, destination):
