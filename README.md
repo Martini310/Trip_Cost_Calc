@@ -1,5 +1,26 @@
 # Trip Cost Calc
-Python Kivy App to calculate cost of a car trip based on fuel prices in your neighbourhood.
+
+Python application to calculate cost of a car trip based on fuel prices in your neighbourhood.
+
+## 🚀 New PWA Version Available!
+
+A modern Progressive Web App (PWA) version is now available with Next.js frontend and Python backend. Check out [README_PWA.md](./README_PWA.md) for details.
+
+**Quick Start (PWA):**
+```bash
+npm run install:all
+npm run dev
+```
+
+## 🐳 Docker Deployment Ready!
+
+The backend is now containerized and ready for deployment on mikr.us or any Docker-compatible platform. See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete deployment instructions.
+
+**Quick Deploy:**
+```bash
+# Build and deploy to mikr.us
+./deploy.sh your-mikrus-registry latest
+```
 
 ## Content of project
 * [Application view](#application-view)
@@ -14,7 +35,7 @@ Python Kivy App to calculate cost of a car trip based on fuel prices in your nei
 
 <img src='https://user-images.githubusercontent.com/108935246/206874249-4b3cb9af-48d4-4ef0-a5fc-e1541d4d561e.png' width='50%' height='50%'>
 
-<img src='https://user-images.githubusercontent.com/108935246/206874251-efe84db2-b442-491b-94ca-63aa724b3796.png' width='50%' height='50%'>
+<img src='https://user-images.githubusercontent.com/108935246/206874251-efe84db2-b442-94ca-63aa724b3796.png' width='50%' height='50%'>
 
 ## General info
 
@@ -68,7 +89,7 @@ Or directly in ```backend.py``` code:
 self.w_api_key = 'WEATHER_API'
 ```
 <br><br>
-To run app correctly you’ll also need some extra modules.<br>
+To run app correctly you'll also need some extra modules.<br>
 Let's install them via ```pip``` module:<br>
 * For **Kivy** module run this line in your terminal:
 ```commandline
@@ -127,7 +148,7 @@ Interface of the App is as simple as possible. Only 4 steps are needed to get fu
        - There are 5 types of fuel to choose from. An app checks the average price of a checked fuel type in user
       voivodeship based on geolocation.
       [Web page with fuel prices](https://www.autocentrum.pl/paliwa/ceny-paliw/). If there is a problem with determining
-      user’s location, an average price from country will be used instead.
+      user's location, an average price from country will be used instead.
    2. 
       - Second way is to set fuel price manually using slider. Step of the slider is 0.01 PLN.
 

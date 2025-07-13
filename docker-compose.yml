@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  trip-calculator-api:
+    build: .
+    ports:
+      - "5001:5001"
+    environment:
+      - API_KEY=${API_KEY}
+      - WEATHER_API=${WEATHER_API}
+      - FLASK_ENV=production
+      - HOST=0.0.0.0
+      - PORT=5001
+    volumes:
+      - ./map.jpg:/app/map.jpg
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s 

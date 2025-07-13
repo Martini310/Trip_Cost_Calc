@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+
+# Environment
+.env
+.env.*
+
+# Build and distribution
+build/
+build/*
+dist/
+*.egg-info/
+.cache/
+
+# Docker
+map.jpg
+
+# Node.js
+node_modules/
+frontend/node_modules/
+package-lock.json
+frontend/package-lock.json
+frontend/.next/
+frontend/.env.local
+
+# iOS and mobile
+trip-calculator-ios/
+touchtracer-ios/
+touchtracer-ios/touchtracer/Images.xcassets/AppIcon.appiconset/Contents.json
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Misc
+*.tmp
+*.temp
+
+# IDE and editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test files
+test_*
+*_test.py
