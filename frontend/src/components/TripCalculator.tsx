@@ -51,14 +51,14 @@ export default function TripCalculator({ onCalculate, isLoading }: TripCalculato
       {/* Origin */}
       <div>
         <label htmlFor="origin" className="block text-sm font-medium text-gray-700 mb-2">
-          Start Address
+          Skąd ruszasz
         </label>
         <input
           type="text"
           id="origin"
           value={origin}
           onChange={(e) => setOrigin(e.target.value)}
-          placeholder="Enter start location"
+          placeholder="Poznań, Krzywoustego 163"
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           required
         />
@@ -67,14 +67,14 @@ export default function TripCalculator({ onCalculate, isLoading }: TripCalculato
       {/* Destination */}
       <div>
         <label htmlFor="destination" className="block text-sm font-medium text-gray-700 mb-2">
-          Destination
+          Dokąd jedziesz
         </label>
         <input
           type="text"
           id="destination"
           value={destination}
           onChange={(e) => setDestination(e.target.value)}
-          placeholder="Enter destination"
+          placeholder="Ostrowiec, Wałcz"
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           required
         />
@@ -83,7 +83,7 @@ export default function TripCalculator({ onCalculate, isLoading }: TripCalculato
       {/* Fuel Consumption */}
       <div>
         <label htmlFor="consumption" className="block text-sm font-medium text-gray-700 mb-2">
-          Fuel Consumption (L/100km): {consumption.toFixed(1)}
+          Zużycie paliwa (L/100km): {consumption.toFixed(1)}
         </label>
         <input
           type="range"
@@ -109,7 +109,7 @@ export default function TripCalculator({ onCalculate, isLoading }: TripCalculato
               onChange={(e) => setFuelMode(e.target.value as 'type' | 'price')}
               className="mr-2"
             />
-            <span className="text-sm font-medium text-gray-700">Select Fuel Type</span>
+            <span className="text-sm font-medium text-gray-700">Wybierz rodzaj paliwa</span>
           </label>
           <label className="flex items-center">
             <input
@@ -120,7 +120,7 @@ export default function TripCalculator({ onCalculate, isLoading }: TripCalculato
               onChange={(e) => setFuelMode(e.target.value as 'type' | 'price')}
               className="mr-2"
             />
-            <span className="text-sm font-medium text-gray-700">Set Price</span>
+            <span className="text-sm font-medium text-gray-700">Ustaw cenę</span>
           </label>
         </div>
 
@@ -144,7 +144,7 @@ export default function TripCalculator({ onCalculate, isLoading }: TripCalculato
         ) : (
           <div>
             <label htmlFor="fuelPrice" className="block text-sm font-medium text-gray-700 mb-2">
-              Fuel Price (PLN/L): {fuelPrice.toFixed(2)}
+              Cena (ZŁ/L): {fuelPrice.toFixed(2)}
             </label>
             <input
               type="range"
@@ -169,10 +169,10 @@ export default function TripCalculator({ onCalculate, isLoading }: TripCalculato
         {isLoading ? (
           <div className="flex items-center justify-center">
             <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-            Calculating...
+            Obliczam...
           </div>
         ) : (
-          'Calculate Trip Cost'
+          'Oblicz koszt podróży'
         )}
       </button>
     </form>

@@ -50,7 +50,7 @@ export default function Home() {
               Trip Cost Calculator
             </h1>
             <p className="text-gray-600">
-              Calculate your journey costs with real-time fuel prices
+              Oblicz koszt podróży na podstawie aktualnych cen paliwa
             </p>
           </div>
 
