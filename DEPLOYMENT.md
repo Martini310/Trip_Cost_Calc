@@ -69,7 +69,10 @@ curl -X POST https://your-mikrus-domain.com/calculate-trip \
 1. **Update API URL**: Set the environment variable in Vercel:
    - `NEXT_PUBLIC_API_URL`: `https://your-mikrus-domain.com`
 
-2. **Build Configuration**: Ensure `next.config.js` is properly configured for PWA
+2. **Add Google Maps API Key**: For the "My Location" feature:
+   - `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`: Your Google Maps API key (same as backend)
+
+3. **Build Configuration**: Ensure `next.config.js` is properly configured for PWA
 
 ### Step 2: Deploy to Vercel
 
@@ -91,12 +94,14 @@ vercel --prod
 2. Navigate to Settings → Environment Variables
 3. Add:
    - `NEXT_PUBLIC_API_URL`: `https://your-mikrus-domain.com`
+   - `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`: Your Google Maps API key
 
 ### Step 4: Test Complete Deployment
 
 1. Visit your Vercel domain
 2. Test trip calculation functionality
-3. Verify map images are loading correctly
+3. Test the "My Location" button to auto-fill start address
+4. Verify map images are loading correctly
 
 ## Production Configuration
 
@@ -137,12 +142,32 @@ services:
 
 **Environment Variables:**
 - `NEXT_PUBLIC_API_URL`: Your mikr.us backend URL
+- `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`: Google Maps API key for reverse geocoding
 
 **Build Settings:**
 - Framework Preset: Next.js
 - Build Command: `npm run build`
 - Output Directory: `.next`
 - Install Command: `npm install`
+
+## API Key Configuration
+
+### Google Maps API Key
+
+You need **one Google Maps API key** that will be used for both:
+1. **Backend**: Trip calculations, directions, map generation
+2. **Frontend**: Reverse geocoding for "My Location" feature
+
+**Required APIs to enable:**
+- Maps JavaScript API
+- Geocoding API
+- Directions API
+- Static Maps API
+- Geolocation API
+
+**API Key Restrictions:**
+- HTTP referrers: Your Vercel domain
+- API restrictions: Only the required APIs listed above
 
 ## Monitoring and Maintenance
 
@@ -185,11 +210,17 @@ Ensure SSL is enabled on mikr.us:
    - Check map file permissions
    - Ensure HTTPS is used for production
 
-3. **API Key Issues**:
+3. **"My Location" Button Not Working**:
+   - Verify `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` is set in Vercel
+   - Check browser console for API errors
+   - Ensure user grants location permission
+
+4. **API Key Issues**:
    - Verify API keys are correctly set in environment variables
    - Check API key quotas and billing
+   - Ensure all required APIs are enabled
 
-4. **Port Conflicts**:
+5. **Port Conflicts**:
    - Ensure port 5001 is available and exposed
    - Check mikr.us container configuration
 

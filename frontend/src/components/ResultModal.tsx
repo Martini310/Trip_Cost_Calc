@@ -57,7 +57,7 @@ export default function ResultModal({ result, onClose }: ResultModalProps) {
             {/* Cost Information */}
             <div className="bg-green-50 rounded-lg p-4">
               <div className="text-center">
-                <p className="text-sm text-gray-600 mb-1">Całkowity koszt</p>
+                <p className="text-sm text-gray-600 mb-1">Całkowity Koszt</p>
                 <p className="text-3xl font-bold text-green-600">
                   {result.trip_cost.toFixed(2)} zł
                 </p>
@@ -88,7 +88,7 @@ export default function ResultModal({ result, onClose }: ResultModalProps) {
                   {result.price} zł/l
                 </p>
                 <p className="text-sm text-gray-600 mt-1">
-                  {typeof result.fuel_type === 'string' ? result.fuel_type : 'Custom Price'}
+                  {typeof result.fuel_type === 'string' ? result.fuel_type : 'Cena Własna'}
                 </p>
               </div>
             </div>
@@ -114,7 +114,7 @@ export default function ResultModal({ result, onClose }: ResultModalProps) {
             {/* Map Display */}
             <div className="bg-gray-100 rounded-lg p-4">
               <div className="text-center mb-3">
-                <p className="text-sm font-medium text-gray-700">Trasa</p>
+                <p className="text-sm font-medium text-gray-700">Mapa Trasy</p>
               </div>
               <div className="relative">
                 {!mapLoaded && !mapError && (
@@ -132,7 +132,7 @@ export default function ResultModal({ result, onClose }: ResultModalProps) {
                 )}
                 <img
                   src={`${API_ENDPOINTS.mapImage}`}
-                  alt="Trip route map"
+                  alt="Mapa trasy podróży"
                   className={`w-full rounded-lg ${mapLoaded ? 'block' : 'hidden'}`}
                   onLoad={handleMapLoad}
                   onError={handleMapError}

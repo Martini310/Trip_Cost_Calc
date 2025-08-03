@@ -9,12 +9,13 @@ import pprint
 
 class TripCost:
 
-    def __init__(self, origin, destination, type_of_fuel_or_price, consumption):
+    def __init__(self, origin, destination, type_of_fuel_or_price, consumption, user_location=None):
         # User input data
         self.origin = origin
         self.destination = destination
         self.fuel = type_of_fuel_or_price
         self.consumption = consumption
+        self.user_location = user_location  # New: user location from frontend
 
         # API keys
         load_dotenv()
@@ -31,15 +32,16 @@ class TripCost:
         self.gmaps = googlemaps.Client(key=self.api_key)
 
         # Origin coordinates
-        self.gmaps_origin = self.gmaps.geocode(self.origin)
+        self.gmaps_origin = self.gmaps.geocode(self.origin, region='pl')
         # Destination coordinates
-        self.gmaps_destination = self.gmaps.geocode(self.destination)
+        self.gmaps_destination = self.gmaps.geocode(self.destination, region='pl')
         # Coordinates of the center point of the trip
         self.center_coordinates = self.center_point(self.gmaps_origin, self.gmaps_destination)
         # Google API response with trip details
         self.directions_result = self.gmaps.directions(self.gmaps_origin[0]["formatted_address"],
                                                        self.gmaps_destination[0]["formatted_address"],
                                                        mode="driving",
+                                                       region="pl",
                                                        departure_time=datetime.now() + timedelta(minutes=0.5))
         # trip distance string
         self.distance_text = self.directions_result[0]['legs'][0]['distance']['text']
@@ -53,7 +55,7 @@ class TripCost:
         # Processed Weather API response (cloudiness, visibility)
         self.weather_description = self.weather_conditions(self.center_coordinates[0], self.center_coordinates[1])
 
-        # Province of user location
+        # Province of user location (now uses user_location if available)
         self.woj = self.wojewodztwo()
 
         # Fuel price
@@ -106,17 +108,25 @@ class TripCost:
         return float(price)
 
     def wojewodztwo(self):
-        # Return province of current user location
-        location = "https://www.googleapis.com/geolocation/v1/geolocate?key=" + self.api_key
-        # Google API response with user location
-        response_location = post(location)
-        body_location = response_location.json()
-        lat = body_location['location']['lat']
-        lng = body_location['location']['lng']
-        pprint.pprint(body_location)
+        # Return province of user location (or server location if user location not available)
+        if self.user_location:
+            # Use user location from frontend
+            lat = self.user_location['lat']
+            lng = self.user_location['lng']
+            pprint.pprint(f"Using user location: {lat}, {lng}")
+        else:
+            # Fallback to server location (old method)
+            location = "https://www.googleapis.com/geolocation/v1/geolocate?key=" + self.api_key
+            # Google API response with server location
+            response_location = post(location)
+            body_location = response_location.json()
+            lat = body_location['location']['lat']
+            lng = body_location['location']['lng']
+            pprint.pprint(body_location)
+        
         # Location address
-        url = f'https://maps.googleapis.com/maps/api/geocode/json?latlng={lat},{lng}&location=pl&result_type' \
-              f'=street_address|postal_code|administrative_area_level_1&location_type=ROOFTOP&key={self.api_key} '
+        url = f'https://maps.googleapis.com/maps/api/geocode/json?latlng={lat},{lng}&region=pl&result_type' \
+              f'=street_address|postal_code|administrative_area_level_1&location_type=ROOFTOP&key={self.api_key}'
         response_address = get(url)
         body_address = response_address.json()
         pprint.pprint(body_address)

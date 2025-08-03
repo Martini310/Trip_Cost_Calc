@@ -18,6 +18,7 @@ export interface TripData {
   destination: string
   fuelType: string | number
   consumption: number
+  userLocation?: { lat: number; lng: number }
 }
 
 export type FuelType = 'PB95' | 'PB98' | 'ON' | 'ON+' | 'LPG' 

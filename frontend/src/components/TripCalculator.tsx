@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { FuelType } from '@/types/trip'
+import { GOOGLE_MAPS_API_KEY } from '@/config/api'
 
 interface TripCalculatorProps {
   onCalculate: (data: {
@@ -9,6 +10,7 @@ interface TripCalculatorProps {
     destination: string
     fuelType: string | number
     consumption: number
+    userLocation?: { lat: number; lng: number }
   }) => void
   isLoading: boolean
 }
@@ -20,6 +22,9 @@ export default function TripCalculator({ onCalculate, isLoading }: TripCalculato
   const [fuelType, setFuelType] = useState<FuelType>('PB95')
   const [fuelPrice, setFuelPrice] = useState(5.0)
   const [consumption, setConsumption] = useState(7.0)
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
+  const [locationPermission, setLocationPermission] = useState<'granted' | 'denied' | 'pending'>('pending')
+  const [isGettingAddress, setIsGettingAddress] = useState(false)
 
   const fuelTypes: { value: FuelType; label: string }[] = [
     { value: 'PB95', label: 'PB95' },
@@ -28,6 +33,92 @@ export default function TripCalculator({ onCalculate, isLoading }: TripCalculato
     { value: 'ON+', label: 'Diesel+' },
     { value: 'LPG', label: 'LPG' },
   ]
+
+  // Get user location on component mount
+  useEffect(() => {
+    const getUserLocation = () => {
+      if (!navigator.geolocation) {
+        console.log('Geolocation is not supported by this browser')
+        setLocationPermission('denied')
+        return
+      }
+
+      setLocationPermission('pending')
+      
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          })
+          setLocationPermission('granted')
+          console.log('User location obtained:', position.coords)
+        },
+        (error) => {
+          console.log('Error getting location:', error)
+          setLocationPermission('denied')
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 60000
+        }
+      )
+    }
+
+    getUserLocation()
+  }, [])
+
+  // Function to get address from coordinates
+  const getAddressFromCoordinates = async (lat: number, lng: number): Promise<string> => {
+    if (!GOOGLE_MAPS_API_KEY) {
+      console.error('Google Maps API key not found')
+      return ''
+    }
+
+    try {
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&region=pl&key=${GOOGLE_MAPS_API_KEY}`
+      )
+      const data = await response.json()
+      
+      if (data.status === 'OK' && data.results.length > 0) {
+        return data.results[0].formatted_address
+      }
+      return ''
+    } catch (error) {
+      console.error('Error getting address:', error)
+      return ''
+    }
+  }
+
+  // Function to get current address
+  const getCurrentAddress = async () => {
+    if (!userLocation) {
+      alert('Lokalizacja niedostępna. Proszę zezwolić na dostęp do lokalizacji.')
+      return
+    }
+
+    if (!GOOGLE_MAPS_API_KEY) {
+      alert('Klucz API Google Maps nie jest skonfigurowany. Proszę skontaktować się z pomocą techniczną.')
+      return
+    }
+
+    setIsGettingAddress(true)
+    try {
+      const address = await getAddressFromCoordinates(userLocation.lat, userLocation.lng)
+      if (address) {
+        setOrigin(address)
+      } else {
+        alert('Nie można pobrać aktualnego adresu. Proszę wprowadzić go ręcznie.')
+      }
+    } catch (error) {
+      console.error('Error getting current address:', error)
+      alert('Błąd podczas pobierania aktualnego adresu. Proszę wprowadzić go ręcznie.')
+    } finally {
+      setIsGettingAddress(false)
+    }
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -43,25 +134,69 @@ export default function TripCalculator({ onCalculate, isLoading }: TripCalculato
       destination: destination.trim(),
       fuelType: fuelValue,
       consumption,
+      userLocation: userLocation || undefined
     })
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Origin */}
+      {/* Location Status */}
+      <div className="bg-blue-50 rounded-lg p-3">
+        <div className="flex items-center space-x-2">
+          <div className={`w-3 h-3 rounded-full ${
+            locationPermission === 'granted' ? 'bg-green-500' :
+            locationPermission === 'denied' ? 'bg-red-500' : 'bg-yellow-500'
+          }`}></div>
+          <span className="text-xs text-gray-700">
+            {locationPermission === 'granted' ? 'Dostęp do lokalizacji przyznany - ceny paliwa będą oparte na średniej cenie paliwa w Twoim województwie' :
+             locationPermission === 'denied' ? 'Dostęp do lokalizacji odmówiony - używanie średniej krajowej ceny paliwa' :
+             'Żądanie dostępu do lokalizacji...'}
+          </span>
+        </div>
+      </div>
+
+      {/* Origin with Auto-fill Button */}
       <div>
         <label htmlFor="origin" className="block text-sm font-medium text-gray-700 mb-2">
           Skąd ruszasz
         </label>
-        <input
-          type="text"
-          id="origin"
-          value={origin}
-          onChange={(e) => setOrigin(e.target.value)}
-          placeholder="Poznań, Krzywoustego 163"
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          required
-        />
+        <div className="flex space-x-2">
+          <input
+            type="text"
+            id="origin"
+            value={origin}
+            onChange={(e) => setOrigin(e.target.value)}
+            placeholder="Poznań, Krzywoustego 163"
+            className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            required
+          />
+          <button
+            type="button"
+            onClick={getCurrentAddress}
+            disabled={locationPermission !== 'granted' || isGettingAddress}
+            className="px-3 py-2 text-xs bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors flex items-center space-x-2"
+          >
+            {isGettingAddress ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                <span>Pobieram...</span>
+              </>
+            ) : (
+              <>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span>Moja Lokalizacja</span>
+              </>
+            )}
+          </button>
+        </div>
+        {locationPermission === 'denied' && (
+          <p className="text-xs text-gray-500 mt-1">
+            Włącz dostęp do lokalizacji, aby automatycznie wypełnić aktualny adres
+          </p>
+        )}
       </div>
 
       {/* Destination */}

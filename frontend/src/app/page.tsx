@@ -15,6 +15,7 @@ export default function Home() {
     destination: string
     fuelType: string | number
     consumption: number
+    userLocation?: { lat: number; lng: number }
   }) => {
     setIsLoading(true)
     setError(null)
@@ -29,13 +30,13 @@ export default function Home() {
       })
 
       if (!response.ok) {
-        throw new Error('Failed to calculate trip cost')
+        throw new Error('Nie udało się obliczyć kosztu podróży')
       }
 
       const data = await response.json()
       setResult(data)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      setError(err instanceof Error ? err.message : 'Wystąpił błąd')
     } finally {
       setIsLoading(false)
     }
@@ -47,7 +48,7 @@ export default function Home() {
         <div className="max-w-md mx-auto">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Trip Cost Calculator
+              Kalkulator Kosztów Podróży
             </h1>
             <p className="text-gray-600">
               Oblicz koszt podróży na podstawie aktualnych cen paliwa

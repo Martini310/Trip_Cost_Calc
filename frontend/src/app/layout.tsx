@@ -5,13 +5,13 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Trip Cost Calculator',
-  description: 'Calculate trip costs based on fuel prices and distance',
+  title: 'Kalkulator Kosztów Podróży',
+  description: 'Oblicz koszt podróży na podstawie aktualnych cen paliwa',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Trip Cost Calculator',
+    title: 'Kalkulator Kosztów Podróży',
   },
   formatDetection: {
     telephone: false,
@@ -31,13 +31,13 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="pl">
       <head>
-        <meta name="application-name" content="Trip Cost Calculator" />
+        <meta name="application-name" content="Kalkulator Kosztów Podróży" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Trip Cost Calculator" />
-        <meta name="description" content="Calculate trip costs based on fuel prices and distance" />
+        <meta name="apple-mobile-web-app-title" content="Kalkulator Kosztów Podróży" />
+        <meta name="description" content="Oblicz koszt podróży na podstawie aktualnych cen paliwa" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="msapplication-config" content="/browserconfig.xml" />

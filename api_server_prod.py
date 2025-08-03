@@ -25,15 +25,20 @@ def calculate_trip():
         destination = data.get('destination')
         fuel_type = data.get('fuel_type')
         consumption = data.get('consumption')
+        user_location = data.get('user_location')  # New: user location from frontend
         
         # Validate required fields
         if not all([origin, destination, fuel_type, consumption]):
             return jsonify({'error': 'Missing required fields'}), 400
         
         logger.info(f"Calculating trip from {origin} to {destination}")
+        if user_location:
+            logger.info(f"Using user location: {user_location}")
+        else:
+            logger.info("No user location provided, using server location")
         
-        # Create TripCost instance
-        trip = TripCost(origin, destination, fuel_type, consumption)
+        # Create TripCost instance with user location
+        trip = TripCost(origin, destination, fuel_type, consumption, user_location)
         
         # Prepare response
         result = {

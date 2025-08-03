@@ -1,7 +1,7 @@
 {
-  "name": "Trip Cost Calculator",
-  "short_name": "TripCalc",
-  "description": "Calculate trip costs based on fuel prices and distance",
+  "name": "Kalkulator Kosztów Podróży",
+  "short_name": "Kalkulator Podróży",
+  "description": "Oblicz koszt podróży na podstawie aktualnych cen paliwa",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

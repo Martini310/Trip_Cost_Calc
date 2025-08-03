@@ -4,7 +4,7 @@ import { API_ENDPOINTS } from '@/config/api'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { origin, destination, fuelType, consumption } = body
+    const { origin, destination, fuelType, consumption, userLocation } = body
 
     // Validate input
     if (!origin || !destination || consumption === undefined) {
@@ -25,6 +25,7 @@ export async function POST(request: NextRequest) {
         destination,
         fuel_type: fuelType,
         consumption,
+        user_location: userLocation, // Pass user location to backend
       }),
     })
 
