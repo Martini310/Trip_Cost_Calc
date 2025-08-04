@@ -45,6 +45,7 @@ class TripCost:
                                                        departure_time=datetime.now() + timedelta(minutes=0.5))
         # trip distance string
         self.distance_text = self.directions_result[0]['legs'][0]['distance']['text']
+        print("test 1")
         # trip distance int (meters)
         self.distance_value = self.directions_result[0]['legs'][0]['distance']['value']
         # trip duration string
@@ -57,11 +58,13 @@ class TripCost:
 
         # Province of user location (now uses user_location if available)
         self.woj = self.wojewodztwo()
+        print('3 ', self.woj)
 
         # Fuel price
         if type(self.fuel) == str:
             # if selected type of fuel
             self.price = self.petrol_price(self.fuel, self.woj)
+            print('4 ', self.price)
         else:
             # if set by user
             self.price = self.fuel
@@ -134,7 +137,9 @@ class TripCost:
             return 'Polska'
         else:
             wojewodztwo = body_address['results'][0]['address_components'][5]['long_name']
+            print('1 ', wojewodztwo)
             wojewodztwo = wojewodztwo.split()[1]
+            print('2 ', wojewodztwo)
         return wojewodztwo.lower()
 
     # def distance_duration(self, origin, destination):
