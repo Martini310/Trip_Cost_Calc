@@ -55,4 +55,4 @@ jobs:
             docker run -d --name trip-calculator \
               --env-file .env \
               -p 5001:5001 \
-              ${{ secrets.DOCKER_IMAGE_NAME }}:${VERSION}
+              ${{ secrets.DOCKER_IMAGE_NAME }}:${{ env.VERSION }}
