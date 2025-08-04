@@ -5,6 +5,9 @@ from bs4 import BeautifulSoup
 import googlemaps
 from datetime import datetime, timedelta
 import pprint
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class TripCost:
@@ -45,7 +48,6 @@ class TripCost:
                                                        departure_time=datetime.now() + timedelta(minutes=0.5))
         # trip distance string
         self.distance_text = self.directions_result[0]['legs'][0]['distance']['text']
-        print("test 1")
         # trip distance int (meters)
         self.distance_value = self.directions_result[0]['legs'][0]['distance']['value']
         # trip duration string
@@ -116,16 +118,9 @@ class TripCost:
             # Use user location from frontend
             lat = self.user_location['lat']
             lng = self.user_location['lng']
-            pprint.pprint(f"Using user location: {lat}, {lng}")
+            logger.info(f"Using user location - backend: {lat}, {lng}")
         else:
-            # Fallback to server location (old method)
-            location = "https://www.googleapis.com/geolocation/v1/geolocate?key=" + self.api_key
-            # Google API response with server location
-            response_location = post(location)
-            body_location = response_location.json()
-            lat = body_location['location']['lat']
-            lng = body_location['location']['lng']
-            pprint.pprint(body_location)
+            return 'Polska'
         
         # Location address
         url = f'https://maps.googleapis.com/maps/api/geocode/json?latlng={lat},{lng}&region=pl&result_type' \
@@ -136,10 +131,14 @@ class TripCost:
         if body_address['status'] == 'ZERO_RESULTS':
             return 'Polska'
         else:
-            wojewodztwo = body_address['results'][0]['address_components'][5]['long_name']
-            print('1 ', wojewodztwo)
-            wojewodztwo = wojewodztwo.split()[1]
-            print('2 ', wojewodztwo)
+            components = body_address['results'][0]['address_components']
+            for component in components:
+                if 'administrative_area_level_1' in component['types']:
+                    wojewodztwo = component['long_name']
+                    wojewodztwo = wojewodztwo.split()[1]
+                    break
+                else:
+                    return 'Polska'
         return wojewodztwo.lower()
 
     # def distance_duration(self, origin, destination):
