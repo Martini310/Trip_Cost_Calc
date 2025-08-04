@@ -48,8 +48,8 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             cd /root/trip-calculator
-            echo "Using image version: $VERSION"
-            docker pull ${{ secrets.DOCKER_IMAGE_NAME }}:${VERSION}
+            echo "Using image version: ${{ env.VERSION }}"
+            docker pull ${{ secrets.DOCKER_IMAGE_NAME }}:${{ env.VERSION }}
             docker stop trip-calculator || true
             docker rm trip-calculator || true
             docker run -d --name trip-calculator \
