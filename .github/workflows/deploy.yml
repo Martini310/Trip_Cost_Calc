@@ -1,0 +1,58 @@
+name: Build & Deploy Trip Calculator
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Read version
+        id: version
+        run: |
+          VERSION=$(cat VERSION.txt)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build image with version tags
+        run: |
+          docker build -t ${{ secrets.DOCKER_IMAGE_NAME }}:${VERSION} .
+          docker tag ${{ secrets.DOCKER_IMAGE_NAME }}:${VERSION} ${{ secrets.DOCKER_IMAGE_NAME }}:latest
+          docker tag ${{ secrets.DOCKER_IMAGE_NAME }}:${VERSION} ${{ secrets.DOCKER_IMAGE_NAME }}:${SHORT_SHA}
+
+      - name: Push all tags
+        run: |
+          docker push ${{ secrets.DOCKER_IMAGE_NAME }}:${VERSION}
+          docker push ${{ secrets.DOCKER_IMAGE_NAME }}:latest
+          docker push ${{ secrets.DOCKER_IMAGE_NAME }}:${SHORT_SHA}
+
+      - name: Deploy on VPS via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          port: ${{ secrets.VPS_PORT }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd /root/trip-calculator
+            echo "Using image version: $VERSION"
+            docker pull ${{ secrets.DOCKER_IMAGE_NAME }}:${VERSION}
+            docker stop trip-calculator || true
+            docker rm trip-calculator || true
+            docker run -d --name trip-calculator \
+              --env-file .env \
+              -p 5001:5001 \
+              ${{ secrets.DOCKER_IMAGE_NAME }}:${VERSION}
