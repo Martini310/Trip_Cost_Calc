@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { FuelType } from '@/types/trip'
 import { GOOGLE_MAPS_API_KEY } from '@/config/api'
+import GooglePlaceAutocomplete from '@/components/LocationInput'
 
 interface TripCalculatorProps {
   onCalculate: (data: {
@@ -104,11 +105,29 @@ export default function TripCalculator({ onCalculate, isLoading }: TripCalculato
       return
     }
 
+    function updateGMPAutocompleteValue(id: string, address: string) {
+      const el = document.getElementById(id) as any;
+      if (el && el.shadowRoot) {
+        const input = el.shadowRoot.querySelector('input');
+        if (input) {
+          input.value = address;
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        el.blur()
+        setTimeout(() => {
+          document.body.click(); // symulujemy kliknięcie poza polem
+        }, 50);
+      }
+    }
+
     setIsGettingAddress(true)
     try {
       const address = await getAddressFromCoordinates(userLocation.lat, userLocation.lng)
       if (address) {
         setOrigin(address)
+        updateGMPAutocompleteValue('origin', address);
+
       } else {
         alert('Nie można pobrać aktualnego adresu. Proszę wprowadzić go ręcznie.')
       }
@@ -143,7 +162,7 @@ export default function TripCalculator({ onCalculate, isLoading }: TripCalculato
       {/* Location Status */}
       <div className="bg-blue-50 rounded-lg p-3">
         <div className="flex items-center space-x-2">
-          <div className={`w-3 h-3 rounded-full ${
+          <div className={`m-1 p-1 w-3 h-3 rounded-full ${
             locationPermission === 'granted' ? 'bg-green-500' :
             locationPermission === 'denied' ? 'bg-red-500' : 'bg-yellow-500'
           }`}></div>
@@ -161,20 +180,17 @@ export default function TripCalculator({ onCalculate, isLoading }: TripCalculato
           Skąd ruszasz
         </label>
         <div className="flex space-x-2">
-          <input
-            type="text"
+          <GooglePlaceAutocomplete
             id="origin"
-            value={origin}
-            onChange={(e) => setOrigin(e.target.value)}
-            placeholder="Poznań, Krzywoustego 163"
-            className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            required
+            onSelect={setOrigin}
           />
+        </div>
+        <div className='flex space-x-2' >
           <button
             type="button"
             onClick={getCurrentAddress}
             disabled={locationPermission !== 'granted' || isGettingAddress}
-            className="px-3 py-2 text-xs bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors flex items-center space-x-2"
+            className="flex-1 px-3 py-2 my-2 text-xs bg-green-600 text-white justify-center rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors flex items-center space-x-2"
           >
             {isGettingAddress ? (
               <>
@@ -191,12 +207,12 @@ export default function TripCalculator({ onCalculate, isLoading }: TripCalculato
               </>
             )}
           </button>
+          {locationPermission === 'denied' && (
+            <p className="flex-2 py-2 text-xs text-gray-500 mt-1">
+              Włącz dostęp do lokalizacji, aby automatycznie wypełnić aktualny adres
+            </p>
+          )}
         </div>
-        {locationPermission === 'denied' && (
-          <p className="text-xs text-gray-500 mt-1">
-            Włącz dostęp do lokalizacji, aby automatycznie wypełnić aktualny adres
-          </p>
-        )}
       </div>
 
       {/* Destination */}
@@ -204,15 +220,10 @@ export default function TripCalculator({ onCalculate, isLoading }: TripCalculato
         <label htmlFor="destination" className="block text-sm font-medium text-gray-700 mb-2">
           Dokąd jedziesz
         </label>
-        <input
-          type="text"
-          id="destination"
-          value={destination}
-          onChange={(e) => setDestination(e.target.value)}
-          placeholder="Ostrowiec, Wałcz"
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          required
-        />
+      <GooglePlaceAutocomplete
+        id="destination"
+        onSelect={setDestination}
+      />
       </div>
 
       {/* Fuel Consumption */}

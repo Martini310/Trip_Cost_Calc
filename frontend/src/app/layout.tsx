@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import { GOOGLE_MAPS_API_KEY } from '@/config/api'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -49,6 +50,12 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         <link rel="mask-icon" href="/icon-192x192.png" color="#3b82f6" />
         <link rel="shortcut icon" href="/icon-192x192.png" />
+        <script src="/gmp-style-injector.js" />
+        <script
+          src={`https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places-v2`}
+          // async
+          defer
+        />
       </head>
       <body className={inter.className}>{children}</body>
     </html>

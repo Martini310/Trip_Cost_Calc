@@ -1,6 +1,6 @@
 {
   "name": "trip-cost-calculator",
-  "version": "1.0.0",
+  "version": "1.0.5",
   "description": "Trip Cost Calculator with Next.js PWA frontend and Python backend",
   "scripts": {
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
@@ -11,9 +11,20 @@
     "install:all": "npm install && cd frontend && npm install"
   },
   "devDependencies": {
+    "@types/google.maps": "^3.58.1",
     "concurrently": "^8.2.2"
   },
-  "keywords": ["trip", "calculator", "pwa", "nextjs", "python", "flask"],
-  "author": "",
-  "license": "MIT"
-} 
+  "keywords": [
+    "trip",
+    "calculator",
+    "pwa",
+    "nextjs",
+    "python",
+    "flask"
+  ],
+  "author": "Martin Brzeziński",
+  "license": "MIT",
+  "dependencies": {
+    "use-places-autocomplete": "^4.0.1"
+  }
+}
