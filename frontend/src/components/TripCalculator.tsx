@@ -106,9 +106,9 @@ export default function TripCalculator({ onCalculate, isLoading }: TripCalculato
     }
 
     function updateGMPAutocompleteValue(id: string, address: string) {
-      const el = document.getElementById(id) as any;
+      const el = document.getElementById(id) as HTMLElement | null;
       if (el && el.shadowRoot) {
-        const input = el.shadowRoot.querySelector('input');
+        const input = el.shadowRoot.querySelector('input') as HTMLInputElement | null;
         if (input) {
           input.value = address;
           input.dispatchEvent(new Event('input', { bubbles: true }));
