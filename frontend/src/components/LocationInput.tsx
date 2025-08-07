@@ -18,40 +18,42 @@ interface GMPSelectEvent extends Event {
     };
   }
 
-export default function GooglePlaceAutocomplete({ id, onSelect }: GooglePlaceAutocompleteProps) {
-  useEffect(() => {
-    const init = async () => {
-      try {
-        // Import Google Maps Places library
-        await google.maps.importLibrary('places')
-
-        const el = document.getElementById(id)
-        if (!el) return
-
-        el.addEventListener('gmp-select', async ( event: GMPSelectEvent) => {
-            const prediction = event.placePrediction;
-
-            if (!prediction) {
-              return;
-            }
-        
-            const place = prediction.toPlace();
-            await place.fetchFields({ fields: ['formattedAddress'] });
-        
-            const address = place.formattedAddress;
-            console.log(address)
-        
-            if (address) {
-              onSelect(address);
-            }
-        })
-      } catch (e) {
-        console.error('Google Maps Web Component init error:', e)
+  export default function GooglePlaceAutocomplete({ id, placeholder, onSelect }: GooglePlaceAutocompleteProps) {
+    useEffect(() => {
+      const waitForGoogle = () => {
+        if (typeof window === 'undefined' || !window.google || !window.google.maps) {
+          setTimeout(waitForGoogle, 100)
+          return
+        }
+  
+        initGoogleAutocomplete()
       }
-    }
-
-    init()
-  }, [id, onSelect])
+  
+      const initGoogleAutocomplete = async () => {
+        try {
+          await google.maps.importLibrary('places')
+  
+          const el = document.getElementById(id)
+          if (!el) return
+  
+          el.addEventListener('gmp-select', async (event: Event) => {
+            const gmpEvent = event as GMPSelectEvent
+            const prediction = gmpEvent.placePrediction
+            if (!prediction) return
+  
+            const place = prediction.toPlace()
+            await place.fetchFields({ fields: ['formattedAddress'] })
+  
+            const address = place.formattedAddress
+            if (address) onSelect(address)
+          })
+        } catch (e) {
+          console.error('Google Maps Web Component init error:', e)
+        }
+      }
+  
+      waitForGoogle()
+    }, [id, onSelect])
 
   return (
     // @ts-expect-error: Web Component is not typed

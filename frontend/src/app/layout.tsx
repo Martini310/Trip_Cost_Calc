@@ -56,9 +56,9 @@ export default function RootLayout({
           src="/gmp-style-injector.js" 
           strategy="afterInteractive" 
         />
+
         <Script
           src={`https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places-v2`}
-          // async
           strategy="afterInteractive"
           defer
         />
