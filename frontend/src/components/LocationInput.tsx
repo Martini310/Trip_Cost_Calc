@@ -15,12 +15,12 @@ export default function GooglePlaceAutocomplete({ id, onSelect }: Props) {
                 return
             }
 
-            // @ts-ignore: Web Component, brak typów
             const el = document.getElementById(id)
             if (!el) return
 
-            el.addEventListener('gmp-select', async (e: any) => {
-                const prediction = e?.placePrediction
+            el.addEventListener('gmp-select', async (event: unknown) => {
+                const customEvent = event as CustomEvent
+                const prediction = (customEvent as any)?.placePrediction
                 if (!prediction) return
 
                 const place = prediction.toPlace()
