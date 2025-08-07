@@ -18,7 +18,7 @@ interface GMPSelectEvent extends Event {
     };
   }
 
-  export default function GooglePlaceAutocomplete({ id, placeholder, onSelect }: GooglePlaceAutocompleteProps) {
+  export default function GooglePlaceAutocomplete({ id, onSelect }: GooglePlaceAutocompleteProps) {
     useEffect(() => {
       const waitForGoogle = () => {
         if (typeof window === 'undefined' || !window.google || !window.google.maps) {
