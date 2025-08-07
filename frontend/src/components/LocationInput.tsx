@@ -2,62 +2,38 @@
 
 import { useEffect } from 'react'
 
-declare global {
-    interface Window {
-      google: typeof google
-    }
-  }
-interface GooglePlaceAutocompleteProps {
-  id: string
-  placeholder?: string
-  onSelect: (address: string) => void
+interface Props {
+    id: string
+    onSelect: (address: string) => void
 }
 
-// Typ obiektu placePrediction
-interface GMPSelectEvent extends Event {
-    placePrediction?: {
-      toPlace: () => {
-        fetchFields: (args: { fields: string[] }) => Promise<void>;
-        formattedAddress: string;
-      };
-    };
-  }
-
-  export default function GooglePlaceAutocomplete({ id, onSelect }: GooglePlaceAutocompleteProps) {
+export default function GooglePlaceAutocomplete({ id, onSelect }: Props) {
     useEffect(() => {
-      const waitForGoogle = () => {
-        if (typeof window === 'undefined' || !window.google || !window.google.maps) {
-          setTimeout(waitForGoogle, 100)
-          return
+        const waitForGoogle = () => {
+            if (typeof window === 'undefined' || !(window as any).google?.maps) {
+                setTimeout(waitForGoogle, 100)
+                return
+            }
+
+            // @ts-ignore: Web Component, brak typów
+            const el = document.getElementById(id)
+            if (!el) return
+
+            el.addEventListener('gmp-select', async (e: any) => {
+                const prediction = e?.placePrediction
+                if (!prediction) return
+
+                const place = prediction.toPlace()
+                await place.fetchFields({ fields: ['formattedAddress'] })
+
+                const address = place.formattedAddress
+                if (address) {
+                    onSelect(address)
+                }
+            })
         }
-  
-        initGoogleAutocomplete()
-      }
-  
-      const initGoogleAutocomplete = async () => {
-        try {
-          await google.maps.importLibrary('places')
-  
-          const el = document.getElementById(id)
-          if (!el) return
-  
-          el.addEventListener('gmp-select', async (event: Event) => {
-            const gmpEvent = event as GMPSelectEvent
-            const prediction = gmpEvent.placePrediction
-            if (!prediction) return
-  
-            const place = prediction.toPlace()
-            await place.fetchFields({ fields: ['formattedAddress'] })
-  
-            const address = place.formattedAddress
-            if (address) onSelect(address)
-          })
-        } catch (e) {
-          console.error('Google Maps Web Component init error:', e)
-        }
-      }
-  
-      waitForGoogle()
+
+        waitForGoogle()
     }, [id, onSelect])
 
   return (
