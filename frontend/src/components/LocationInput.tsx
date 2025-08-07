@@ -2,6 +2,11 @@
 
 import { useEffect } from 'react'
 
+declare global {
+    interface Window {
+      google: typeof google
+    }
+  }
 interface GooglePlaceAutocompleteProps {
   id: string
   placeholder?: string
