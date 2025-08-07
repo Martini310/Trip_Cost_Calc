@@ -8,6 +8,16 @@ interface GooglePlaceAutocompleteProps {
   onSelect: (address: string) => void
 }
 
+// Typ obiektu placePrediction
+interface GMPSelectEvent extends Event {
+    placePrediction?: {
+      toPlace: () => {
+        fetchFields: (args: { fields: string[] }) => Promise<void>;
+        formattedAddress: string;
+      };
+    };
+  }
+
 export default function GooglePlaceAutocomplete({ id, onSelect }: GooglePlaceAutocompleteProps) {
   useEffect(() => {
     const init = async () => {
@@ -18,9 +28,8 @@ export default function GooglePlaceAutocomplete({ id, onSelect }: GooglePlaceAut
         const el = document.getElementById(id)
         if (!el) return
 
-        el.addEventListener('gmp-select', async ( event: Event) => {
-            const customEvent = event as CustomEvent;
-            const prediction = (customEvent as any)?.placePrediction;
+        el.addEventListener('gmp-select', async ( event: GMPSelectEvent) => {
+            const prediction = event.placePrediction;
 
             if (!prediction) {
               return;
@@ -54,7 +63,7 @@ export default function GooglePlaceAutocomplete({ id, onSelect }: GooglePlaceAut
         border:"1px solid gray",
         borderRadius:"8px"
       }}
-      class="w-full"
+      className="w-full"
     />
   )
 }
