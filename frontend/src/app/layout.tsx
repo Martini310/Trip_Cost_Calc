@@ -52,10 +52,14 @@ export default function RootLayout({
         <link rel="mask-icon" href="/icon-192x192.png" color="#3b82f6" />
         <link rel="shortcut icon" href="/icon-192x192.png" />
         {/* <script src="/gmp-style-injector.js" /> */}
-        <Script src="/gmp-style-injector.js" strategy="afterInteractive" />
-        <script
+        <Script 
+          src="/gmp-style-injector.js" 
+          strategy="afterInteractive" 
+        />
+        <Script
           src={`https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places-v2`}
           // async
+          strategy="afterInteractive"
           defer
         />
       </head>
