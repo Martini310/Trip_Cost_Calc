@@ -1,6 +1,6 @@
 from os import environ
 from requests import get, post
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 from bs4 import BeautifulSoup
 import googlemaps
 from datetime import datetime, timedelta
@@ -9,6 +9,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+DOTENV_PATH = find_dotenv(".env", usecwd=True)
+load_dotenv(DOTENV_PATH, override=True)
+logger.info("Loaded .env from: %s", DOTENV_PATH or "<not found>")
+logger.info("API_KEY=%s", environ.get("API_KEY"))
 
 class TripCost:
 
@@ -21,7 +25,6 @@ class TripCost:
         self.user_location = user_location  # New: user location from frontend
 
         # API keys
-        load_dotenv()
         # Google API KEY
         self.api_key = environ.get('API_KEY')
         # Open Weather Map API KEY
@@ -60,13 +63,11 @@ class TripCost:
 
         # Province of user location (now uses user_location if available)
         self.woj = self.wojewodztwo()
-        print('3 ', self.woj)
 
         # Fuel price
         if type(self.fuel) == str:
             # if selected type of fuel
             self.price = self.petrol_price(self.fuel, self.woj)
-            print('4 ', self.price)
         else:
             # if set by user
             self.price = self.fuel
