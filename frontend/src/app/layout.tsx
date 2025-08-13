@@ -62,6 +62,8 @@ export default function RootLayout({
           strategy="afterInteractive"
           defer
         />
+
+
       </head>
       <body className={inter.className}>{children}</body>
     </html>

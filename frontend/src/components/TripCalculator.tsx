@@ -182,6 +182,7 @@ export default function TripCalculator({ onCalculate, isLoading }: TripCalculato
         <div className="flex space-x-2">
           <GooglePlaceAutocomplete
             id="origin"
+            placeholder="Skąd ruszasz"
             onSelect={setOrigin}
           />
         </div>
@@ -222,6 +223,7 @@ export default function TripCalculator({ onCalculate, isLoading }: TripCalculato
         </label>
       <GooglePlaceAutocomplete
         id="destination"
+        placeholder="Dokąd jedziesz"
         onSelect={setDestination}
       />
       </div>
