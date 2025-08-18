@@ -4,9 +4,12 @@ from backend import TripCost
 import os
 from dotenv import load_dotenv
 import logging
+import requests
 
 # Load environment variables
 load_dotenv()
+
+GOOGLE_MAPS_API_KEY = os.environ.get("API_KEY")
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -16,6 +19,16 @@ logger.info(f'API_KEY={api}')
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
+
+@app.route('/geocode', methods=['GET'])
+def geocode():
+    lat = request.args.get('lat')
+    lng = request.args.get('lng')
+    if not GOOGLE_MAPS_API_KEY:
+        return jsonify({"error": "Google Maps API key not configured on the server."}), 500
+    url = f"https://maps.googleapis.com/maps/api/geocode/json?latlng={lat},{lng}&region=pl&key={GOOGLE_MAPS_API_KEY}"
+    response = requests.get(url)
+    return jsonify(response.json())
 
 @app.route('/calculate-trip', methods=['POST'])
 def calculate_trip():
@@ -86,6 +99,7 @@ def root():
         'message': 'Trip Cost Calculator API',
         'version': '1.0.0',
         'endpoints': {
+            'geocode': '/geocode',
             'calculate_trip': '/calculate-trip',
             'map_image': '/map-image',
             'health': '/health'

@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { FuelType } from '@/types/trip'
-import { GOOGLE_MAPS_API_KEY } from '@/config/api'
 import GooglePlaceAutocomplete from '@/components/LocationInput'
+import { API_ENDPOINTS } from '@/config/api'
 
 interface TripCalculatorProps {
   onCalculate: (data: {
@@ -72,17 +72,13 @@ export default function TripCalculator({ onCalculate, isLoading }: TripCalculato
 
   // Function to get address from coordinates
   const getAddressFromCoordinates = async (lat: number, lng: number): Promise<string> => {
-    if (!GOOGLE_MAPS_API_KEY) {
-      console.error('Google Maps API key not found')
-      return ''
-    }
 
     try {
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&region=pl&key=${GOOGLE_MAPS_API_KEY}`
+        `${API_ENDPOINTS.geocode}?lat=${lat}&lng=${lng}`
       )
       const data = await response.json()
-      
+
       if (data.status === 'OK' && data.results.length > 0) {
         return data.results[0].formatted_address
       }
@@ -97,11 +93,6 @@ export default function TripCalculator({ onCalculate, isLoading }: TripCalculato
   const getCurrentAddress = async () => {
     if (!userLocation) {
       alert('Lokalizacja niedostępna. Proszę zezwolić na dostęp do lokalizacji.')
-      return
-    }
-
-    if (!GOOGLE_MAPS_API_KEY) {
-      alert('Klucz API Google Maps nie jest skonfigurowany. Proszę skontaktować się z pomocą techniczną.')
       return
     }
 
