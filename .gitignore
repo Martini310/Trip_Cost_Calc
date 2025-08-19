@@ -9,7 +9,6 @@ env/
 
 # Environment
 .env
-.env.*
 
 # Build and distribution
 build/
